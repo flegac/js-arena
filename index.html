@@ -1,0 +1,119 @@
+<html>
+
+<head>
+    <title>Arena</title>
+
+    <link rel="stylesheet" type="text/css" href="style/style.css">
+    <script src="script/code.js"></script>
+
+    <script>
+        var ctx = null;
+        var ARENA = null;
+
+         //update periodicity
+        var FPS = 60;
+        var DT = 1.0 / FPS;
+
+         //images
+        var crosshairImage = null;
+        var shipImage = null;
+        var projectileImage = null;
+        var starImage = null;
+
+         //audio
+        var shotAudio = null;
+
+        var SHIP_DISPLAY = null;
+        var CROSSHAIR_DISPLAY = null;
+        var PROJECTILE_DISPLAY = null;
+        var IMPACT_DISPLAY = null;
+        var EXPLOSION_DISPLAY = null;
+        var STAR_DISPLAY = null;
+
+
+        function init() {
+            console.log("init");
+                alert("\
+***** README ***********************\n\
+z : forward truster\n\
+q : right truster = turn left\n\
+d : left truster = turn right\n\
+s : back truster\n\
+SPACE : fire guns (or mouse button)\n\
+F5 : new game :)\n\
+*************************************\n\
++ enemies waves never stop\n\
++ there is no scores\n\
++ when player shield is down they stop recharging\
+");
+            
+            try {
+                var c = document.getElementById("Arena");
+                ctx = c.getContext("2d");
+
+                crosshairImage = document.getElementById("crosshair");
+                shipImage = document.getElementById("ship");
+                projectileImage = document.getElementById("shot");
+                fireImage = document.getElementById("fire");
+                impactImage = document.getElementById("impact");
+                starImage = document.getElementById("star");
+
+                shotAudio = document.getElementById("blop");
+
+                SHIP_DISPLAY = new Painter(shipImage, 64, new Vec(0, 0), 0);
+                CROSSHAIR_DISPLAY = new Painter(crosshairImage, 45, new Vec(0, 0), 0);
+                PROJECTILE_DISPLAY = new Painter(projectileImage, 6, new Vec(0, 0), 0);
+                IMPACT_DISPLAY = new Painter(impactImage, 10, new Vec(0, 0), 0);
+                EXPLOSION_DISPLAY = new Painter(impactImage, 20, new Vec(0, 0), 0);
+                STAR_DISPLAY = new Painter(starImage, 10, new Vec(0, 0), 0);
+
+
+                ARENA = new Arena("MAIN_ARENA", screen.availWidth - 50, screen.availHeight - 100);
+                setInterval(function () {
+                    ARENA.update();
+                }, 1000 / FPS);
+                
+                
+                setInterval(function() {
+                    
+                    if( ARENA.simulator.player.isDestroyed()) {
+                        return;
+                    }
+                    if( ARENA.simulator.ships.length > 8) {
+                        return;
+                    }
+                    
+                       var N = 5;
+                    for (var i = 0; i < N; i++) {
+                        var position = new Vec(Math.random()-.5, Math.random()-.5);
+                        position.normalize(2000);
+                        ARENA.simulator.register("ship", new Enemy(position, null));
+                    }
+                }, 2000);
+            } catch (e) {
+                console.log("ERROR(init): " + e);
+            }
+        }
+    </script>
+
+</head>
+
+<body onload="init();" onkeydown="Controller.onkeydown(event)" onkeyup="Controller.onkeyup(event)" onwheel="Controller.onwheel(event)">
+    <canvas id="Arena" onmousemove="Controller.onmousemove(event)" onmouseup="Controller.onmouseup(event)" onmousedown="Controller.onmousedown(event)"></canvas>
+    <div style="display:none">
+        <img id="ship" src="data/ship.png"></img>
+        <img id="crosshair" src="data/crosshair.gif"></img>
+        <img id="shot" src="data/bullet.png"></img>
+        <img id="fire" src="data/fire.png"></img>
+        <img id="impact" src="data/impact.gif"></img>
+        <img id="star" src="data/star.png"></img>
+
+        <audio id="blop">
+            <source src="data/Blop.wav" type="audio/ogg" />Your browser does not support the audio element.
+        </audio>
+    </div>
+
+
+</body>
+
+</html>
