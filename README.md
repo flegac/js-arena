@@ -5,3 +5,6 @@ Done at Christmas holidays (2014) to experiments with HTML5 canvas
 
 # How to play
 Download the zip and open index.html with your browser
+
+or try it online :
+https://flegac.github.io/js-arena.io/
